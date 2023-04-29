@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Get Air Quality Index by Latitude and Longitude</title>
+</head>
+<style>
+    body{ 
+      background-image:linear-gradient(rgba(0, 0, 0, 0.708),rgba(0, 0, 1, 0.708)),url("https://imgs.search.brave.com/tYjSlUjGIF49f6chGqsD0ZmLJgPnbboiOWs2tfrPHL4/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly9hbmRy/b2lkd2F2ZXMuY29t/L3dwLWNvbnRlbnQv/dXBsb2Fkcy93ZWF0/aGVyLnBuZw");background-size:cover;
+      background-size: auto;
+  background-position: center;
+
+    }
+
+
+h1 {
+    font-family: 'Subway Ticker', sans-serif;
+                                                
+  font-size: 350%;
+  text-align: center;
+  color: #fff;
+  text-shadow: 4px 4px #02032e;
+}
+.loc-input {
+	border: 3px solid #000000;
+    color: #000000dd;
+    text-decoration-color: #fff;
+	font-size: 1rem;
+	padding: 8px;
+	border-radius: 6px;
+	margin: 8px;
+	width: 250px;
+    text-align: center;
+    opacity: 50%;
+    margin: 3% 8%;
+ 
+     
+}
+label{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 280%;
+  text-align: center;
+  color: #fff;
+  text-shadow: 3px 3px #052f0b9e;
+}
+button {
+  background-color: #040f16bc;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+  align-self: center;
+  text-align: center;
+  position: absolute;
+  margin: 0% 45%;
+}
+
+button:hover {
+  background-color: #084519cc;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+p{
+ position: relative;
+  position: 70% 10%;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 150%;
+  color: #fff;
+  text-shadow: 1px 1px #666;
+}
+.table-container {
+  display: inline-block;
+  margin: 0 10px;
+  vertical-align: top;
+  width: 45%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #25232381;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  border: 1px solid #1a19194a;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #1c1f1c98;
+    color: red;
+  font-weight: bold;
+}
+
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+    
+
+</style>
+   
+  
+  <h1>Air Quality Index</h1>
+  <label>Latitude:</label>
+  <input type="text" id="latitude" class="loc-input">
+  <label>Longitude:</label>
+  <input type="text" id="longitude" class="loc-input"><br>
+  <button onclick="getAirQualityIndex()">Get Index</button><br>
+
+  <p id="result"></p>
+  <script>
+    const API_KEY = "d18ec7f84bmsh0f28cd7c34c640bp109d07jsnf50bcb741b28"; 
+    const API_URL = "https://air-quality.p.rapidapi.com/current/airquality";
+    async function getAirQualityIndex() {
+      const latitude = document.getElementById("latitude").value;
+      const longitude = document.getElementById("longitude").value;
+      
+      const response = await fetch(`${API_URL}?lat=${latitude}&lon=${longitude}`, {
+        headers: {
+          "x-rapidapi-key":"d18ec7f84bmsh0f28cd7c34c640bp109d07jsnf50bcb741b28",
+          "x-rapidapi-host": "air-quality.p.rapidapi.com"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get air quality data: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const index = data.data[0].aqi;
+      const moldLevel = data.data[0].mold_level;
+      const pm10 = data.data[0].pm10;
+      const co = data.data[0].co;
+      const o3 = data.data[0].o3;
+      const pollen = data.data[0].predominant_pollen_type;
+      const so2 = data.data[0].so2;
+      const pollen_level_tree = data.data[0].pollen_level_tree;
+      const pollen_level_weed = data.data[0].pollen_level_weed;
+      const n02 = data.data[0].no2;
+      const pm25 = data.data[0].pm25;
+      const pollen_level_grass = data.data[0].pollen_level_grass;
+      const timezone= data.data[0].timezone;
+      const components = data.data[0].components;
+      const result = document.getElementById("result");
+      result.innerHTML = `
+        <br>
+        <div class="table-container">
+  <table>
+    <thead><tr>
+          <td>Air Quality Index:</td><td>${index}</td></tr>
+          <tr><td>AQI 0-50: Good</td></tr>
+          <tr><td>AQI 51-100: Moderate</td></tr>
+        <tr><td>AQI 101-150: Unhealthy for sensitive groups </td></tr>
+        <tr><td>AQI 151-200: Unhealthy</td></tr>
+      <tr><td>AQI 201-300: Very unhealthy</td></tr>
+    <tr><td>AQI 301-500: Hazardous </br></td>
+</tr>
+        </tbody>
+      </table>
+</div>
+      
+ 
+
+
+          <div class="table-container">
+  <table>
+    <thead>
+
+        <tr><td><center>Components of air(Pollutants)</center></td></tr>
+          <tr><td>Mold Level:</td> <td>${moldLevel}</td></tr>
+       <tr> <td>pm10:</td> <td>${pm10}</td></tr>
+       <tr> <td>CO:</td> <td>${co}</td></tr>
+       <tr><td>O₃:</td> <td>${o3}</td></tr>
+       <tr><td>SO₂:</td> <td>${so2}</td></tr>
+        <tr><td>Pollen level tree:</td> <td>${pollen_level_tree}</td></tr>
+          <tr><td>Pollen level weed:</td> <td>${pollen_level_weed}</td></tr>
+            <tr><td>NO₂:</td><td> ${n02}</td></tr>
+              <tr><td>pm25:</td><td> ${pm25}</td></tr>
+                <tr><td>Pollen level grass : </td><td>${pollen_level_grass}</td></tr>
+                  
+              </tbody>
+  </table>
+</div>
+
+        
+      `;
+    }
+  </script>
+  
+</body>
+</html>
